@@ -1,49 +1,64 @@
 package intro
 
-import org.scalacheck._, Arbitrary._, Gen._, Prop._
+import org.scalacheck._, Arbitrary._, Prop._
 
 object ListSpecification extends Properties("List") {
-  /*
-   * Example: Verify that that our Lists.length matches the
-   * builtin List#size
-   */
-  property("Lists#length matches standard library") =
-    forAll((xs: List[Int]) => Lists.length(xs) == xs.size)
 
-  /* Exercise 1 */
-  property("Lists#append - the length of the result is equal to the sum of the two input lengths") =
-    ???
+  property("Lists#length") =
+    Lists.length(List(1, 2, 3, 4)) ?= 4
 
-  /* Exercise 2 */
-  property("Lists#append - every element in the first and second list appears in the result") =
-    ???
+  property("Lists#lengthX") =
+    Lists.lengthX(List(1, 2, 3, 4)) ?= 4
 
-  /* Exercise 3 */
-  property("Lists#filter - filter(_ => false) always gives empty list") =
-    ???
+  property("Lists#append") =
+    Lists.append(List(1, 2, 3, 4), List(5, 6, 7, 8)) ?=  List(1, 2, 3, 4, 5, 6, 7, 8)
 
-  /* Exercise 4 */
-  property("Lists#filter - filter(_ => true) always gives input list") =
-    ???
+  property("Lists#append prop") =
+    forAll(arbitrary[List[Int]], arbitrary[List[Int]], arbitrary[List[Int]]) { (x, y, z) =>
+      Lists.append(Lists.append(x, y), z) ?= Lists.append(x, Lists.append(y, z))
+    }
 
-  /* Exercise 5 */
-  property("Lists#filter - length of output is always less than length of input") =
-    ???
+  property("Lists#map") =
+    Lists.map(List(1, 2, 3, 4))(x => x + 1) ?= List(2, 3, 4, 5)
 
-  /* *Challenge* exercise 6
-     Identify a set of properties that together with the type signature
-     guarantees the validity of your reverse function (assuming pure-total FP) */
-  property("Lists#reverse...") =
-    ???
+  property("Lists#filter") =
+    Lists.filter(List(1, 2, 3, 4))(i => i < 3) ?= List(1, 2)
 
-  /* *Challenge* exercise 7
-     Identify a set of properties for testing sequence */
-  property("Lists#sequence...") =
-    ???
+  property("Lists#filter true") =
+    forAll(arbitrary[List[Boolean]]) { l =>
+      Lists.filter(l)(_ => true) ?= l
+    }
 
-  /* *Challenge* exercise 8
-     Identify a set of properties for testing ranges */
-  property("Lists#ranges...") =
-    ???
+  property("Lists#filter false") =
+    forAll(arbitrary[List[Boolean]]) { l =>
+      Lists.filter(l)(_ => false) ?= Nil
+    }
 
+  property("Lists#reverse") =
+    Lists.reverse(List(1, 2, 3, 4)) ?= List(4, 3, 2, 1)
+
+  property("Lists#reverse p1") =
+    forAll(arbitrary[List[Int]], arbitrary[List[Int]]) { (x, y) =>
+      Lists.reverse(x) ++ Lists.reverse(y) ?= Lists.reverse(y ++ x)
+    }
+
+  property("Lists#reverse p2") =
+    forAll(arbitrary[Int]) { x =>
+      Lists.reverse(x :: Nil) ?= x :: Nil
+    }
+
+  property("Lists#sequence some") =
+    Lists.sequence(List[Option[Int]](Some(1), Some(2), Some(3))) ?= Some(List(1, 2, 3))
+
+  property("Lists#sequence none") =
+    Lists.sequence(List[Option[Int]](Some(1), None, Some(3))) ?= None
+
+  property("Lists#ranges 1") =
+    Lists.ranges(List(1, 2, 3, 4, 7, 8, 9, 10, 30, 40, 41)) ?=  List((1, 4), (7, 10), (30, 30), (40, 41))
+
+  property("Lists#ranges 2") =
+    Lists.ranges(List(1, 2, 3, 4)) ?= List((1, 4))
+
+  property("Lists#ranges 3") =
+    Lists.ranges(List(1, 2, 4)) ?= List((1, 2), (4, 4))
 }

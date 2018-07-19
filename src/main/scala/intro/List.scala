@@ -150,10 +150,7 @@ object Lists {
    * resX: List[(Int, Int)] = List((1, 4))
    *
    * scala> Lists.ranges(List(1, 2, 4))
-   * resX: List[(Int, Int)] = List((1, 2), List(4, 4))
-   *
-   * scala> Lists.ranges(List(2, 1, 3, 4, 9, 7, 8, 10, 30, 30, 4, 41))
-   * resX: List[(Int, Int)] = List((1, 4), (7, 10), (30, 30), (40, 41))
+   * resX: List[(Int, Int)] = List((1, 2), (4, 4))
    *
    * ~~~ library hint: use can just use List[A]#sorted and/or List[A]#reverse to
    *     get the list in the correct order.   *

@@ -10,6 +10,7 @@ package intro
  * standard library where Some -> Full, and None -> Empty.
  */
 sealed trait Optional[A] {
+
   /*
    * Implement fold for Optional.
    *

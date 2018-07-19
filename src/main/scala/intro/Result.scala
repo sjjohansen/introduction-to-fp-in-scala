@@ -196,7 +196,7 @@ object ResultExample {
    * Compute an `answer`, by running operation for n and m.
    */
   def calculate(op: Operation, n: Int, m: Int): Int =
-     ???
+    ???
 
   /*
    * Attempt to compute an `answer`, by:
@@ -208,7 +208,7 @@ object ResultExample {
    * hint: use flatMap / map
    */
   def attempt(op: String, n: String, m: String): Result[Int] =
-     ???
+    ???
 
   /*
    * Run a calculation by pattern matching three elements off the input arguments,
