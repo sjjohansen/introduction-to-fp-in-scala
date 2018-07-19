@@ -147,10 +147,10 @@ object Result {
    * Ok of a list of all the values or returning Fail on the first
    * Fail case.
    *
-   * scala> Lists.sequence(List[Result[Int]](Ok(1), Ok(2), Ok(3)))
+   * scala> Result.sequence(List[Result[Int]](Ok(1), Ok(2), Ok(3)))
    * resX: Result[List[Int]] = Ok(List(1, 2, 3))
    *
-   * scala> Lists.sequence(List[Result[Int]](Ok(1), Fail(NotEnoughInput), Ok(3)))
+   * scala> Result.sequence(List[Result[Int]](Ok(1), Fail(NotEnoughInput), Ok(3)))
    * resX: Result[List[Int]] = Fail(NotEnoughInput)
    */
   def sequence[A](xs: List[Result[A]]): Result[List[A]] =

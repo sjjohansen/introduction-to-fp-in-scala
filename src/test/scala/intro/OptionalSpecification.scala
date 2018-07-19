@@ -1,6 +1,8 @@
 package intro
 
-import org.scalacheck._, Arbitrary._, Prop._
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Prop.forAll
+import test._
 
 object OptionalSpecification extends Properties("Optional") {
 

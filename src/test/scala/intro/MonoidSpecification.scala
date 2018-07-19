@@ -1,6 +1,6 @@
 package intro
 
-import org.scalacheck._, Arbitrary._, Gen._, Prop._
+import test._
 
 object MonoidSpecification extends Properties("Monoid") {
 

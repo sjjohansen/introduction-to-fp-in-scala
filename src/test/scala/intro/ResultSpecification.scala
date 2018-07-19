@@ -1,6 +1,6 @@
-package answers.intro
+package intro
 
-import org.scalacheck._, Arbitrary._, Prop._
+import test._
 
 object ResultSpecification extends Properties("Result") {
 
@@ -47,8 +47,8 @@ object ResultSpecification extends Properties("Result") {
     Fail[Int](NotEnoughInput) ||| Fail[Int](UnexpectedInput("?")) ?= Fail[Int](UnexpectedInput("?"))
 
   property("Result#sequence ok") =
-    Lists.sequence(List[Result[Int]](Ok(1), Ok(2), Ok(3))) ?= Ok(List(1, 2, 3))
+    Result.sequence(List[Result[Int]](Ok(1), Ok(2), Ok(3))) ?= Ok(List(1, 2, 3))
 
   property("Result#sequence fail") =
-    Lists.sequence(List[Result[Int]](Ok(1), Fail(NotEnoughInput), Ok(3))) ?= Fail(NotEnoughInput)
+    Result.sequence(List[Result[Int]](Ok(1), Fail(NotEnoughInput), Ok(3))) ?= Fail(NotEnoughInput)
 }

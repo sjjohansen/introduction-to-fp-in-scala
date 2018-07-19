@@ -1,6 +1,6 @@
-package answers.intro
+package intro
 
-import org.scalacheck._, Arbitrary._, Prop._
+import test._
 
 object IdSpecification extends Properties("Id") {
 

@@ -1,6 +1,6 @@
 package intro
 
-import org.scalacheck._, Arbitrary._, Prop._
+import test._
 
 object ListSpecification extends Properties("List") {
 
