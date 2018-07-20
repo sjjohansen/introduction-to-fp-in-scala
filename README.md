@@ -20,18 +20,23 @@ Pre-requisites.
  3. **if you are windows only** install sbt using the [msi installer](http://scalasbt.artifactoryonline.com/scalasbt/sbt-native-packages/org/scala-sbt/sbt/0.13.0/sbt.msi)
 
 
-Getting scala and validating your environment (for unix):
+Getting scala and validating your environment:
 
     git clone https://github.com/markhibberd/introduction-to-fp-in-scala.git
     cd introduction-to-fp-in-scala
     ./sbt "test:compile"
 
+Testing specific tests in a loop, which is good when working on a particular exercise:
 
-Getting scala and validating your environment (for windows):
+    # Start the SBT terminal once, and then subsequent commands are run within that program
+    # Be careful not to type Ctrl^C as this kills the entire session
+    ./sbt
 
-    git clone https://github.com/markhibberd/introduction-to-fp-in-scala.git
-    cd introduction-to-fp-in-scala
-    sbt "test:compile"
+    # Run the tests from a package containing the name "Id"
+    > testOnly "*Id*"
+
+    # Add a ~ for starting a watch daemon to recompile and re-run tests when files are changed
+    > ~testOnly "*Result*"
 
 
 For either platform this may take a few minutes. It will:
@@ -111,11 +116,6 @@ different backgrounds will progress through at different rates.
 ### Algebra for fun and profit
 
  - `src/main/scala/intro/Monoid.scala`
-
-### Property based testing
-
- - Lists: `src/test/scala/intro/ListProperties.scala`
- - Laws: `src/test/scala/intro/MonoidProperties.scala`
 
 ### Parsers
 
