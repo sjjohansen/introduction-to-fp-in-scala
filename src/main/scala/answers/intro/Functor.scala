@@ -29,6 +29,12 @@ object Functor {
       Lists.map(a)(f)
   }
 
+  def void[F[_]: Functor, A](fa: F[A]): F[Unit] =
+    Functor[F].map(fa)(_ => ())
+
+  def amap[F[_]: Functor, A](fa: F[A])(a: A): F[A] =
+    Functor[F].map(fa)(_ => a)
+
   def fpair[F[_]: Functor, A](fa: F[A]): F[(A, A)] =
     Functor[F].map(fa)(a => (a, a))
 
