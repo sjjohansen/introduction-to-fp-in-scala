@@ -1,4 +1,4 @@
-package answers.intro
+package intro
 
 import test._
 
