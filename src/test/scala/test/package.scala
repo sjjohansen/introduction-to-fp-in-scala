@@ -4,6 +4,8 @@ import org.scalacheck.util.Pretty
 package object test {
 
   type Properties = org.scalacheck.Properties
+  type Prop = org.scalacheck.Prop
+  type Gen[A] = org.scalacheck.Gen[A]
 
   implicit def AnyOperators[T](x: => T)(implicit pretty: T => Pretty): ExtendedAny[T] =
     new ExtendedAny[T](x)
@@ -34,7 +36,8 @@ class ExtendedAny[T](x: => T)(implicit pretty: T => Pretty) {
       Prop.?=(x, y)
     } catch {
       case e: NotImplementedError =>
-        Prop.falsified.label(e.getMessage)
+        val t = e.getStackTrace()(1)
+        Prop.falsified.label(s"Not implemented: ${t.getClassName}.${t.getMethodName}")
     }
 }
 
