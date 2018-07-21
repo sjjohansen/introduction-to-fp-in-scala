@@ -1,13 +1,10 @@
 package answers.intro
 
 trait Monad[F[_]] {
+
   def point[A](a: => A): F[A]
-  def pure[A](a: => A): F[A] = point(a)
 
   def bind[A, B](a: F[A])(f: A => F[B]): F[B]
-
-  def map[A, B](a: F[A])(f: A => B): F[B] =
-    bind(a)(b => point(f(b)))
 }
 
 object Monad {
@@ -39,8 +36,13 @@ object Monad {
         a.flatMap(f)
     }
 
+  def map[F[_]: Monad, A, B](a: F[A])(f: A => B): F[B] = {
+    val M = Monad[F]
+    M.bind(a)(b => M.point(f(b)))
+  }
+
   def ap[F[_]: Monad, A, B](fa: F[A])(fab: F[A => B]): F[B] =
-    Monad[F].bind(fa)(a => Monad[F].map(fab)(ab => ab(a)))
+    Monad[F].bind(fa)(a => Monad.map(fab)(ab => ab(a)))
 
   def join[F[_]: Monad, A](fa: F[F[A]]): F[A] =
     Monad[F].bind(fa)(identity)
@@ -54,7 +56,7 @@ object MonadSyntax {
   implicit class AnyMonadSyntax[M[_]: Monad, A](a: M[A]) {
 
     def map[B](f: A => B): M[B] =
-      Monad[M].map(a)(f)
+      Monad.map(a)(f)
 
     def flatMap[B](f: A => M[B]): M[B] =
       Monad[M].bind(a)(f)

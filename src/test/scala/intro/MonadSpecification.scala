@@ -4,6 +4,9 @@ import test._
 
 object MonadSpecification extends Properties("Monad") {
 
+  property("monad: map") =
+    Monad.map(Option(1))((i: Int) => i + 1) ?= Some(2)
+
   property("monad: ap some some") =
     Monad.ap(Option(1))(Some((i: Int) => i + 1)) ?= Some(2)
 

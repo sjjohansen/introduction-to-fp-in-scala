@@ -111,6 +111,8 @@ different backgrounds will progress through at different rates.
 #### Exercises
 
  - `src/main/scala/intro/Functor.scala`
+ - `src/main/scala/intro/Applicative.scala`
+ - `src/main/scala/intro/Monad.scala`
 
 
 ### Algebra for fun and profit

@@ -1,13 +1,10 @@
 package intro
 
 trait Monad[F[_]] {
+
   def point[A](a: => A): F[A]
-  def pure[A](a: => A): F[A] = point(a)
 
   def bind[A, B](a: F[A])(f: A => F[B]): F[B]
-
-  def map[A, B](a: F[A])(f: A => B): F[B] =
-    bind(a)(b => point(f(b)))
 }
 
 object Monad {
@@ -57,6 +54,15 @@ object Monad {
     }
 
   /**
+   * Witness that all things with `bind` and `point` also have `map`
+   *
+   * scala> Monad[Option].map(Option(1))((i: Int) => i + 1)
+   * resX: Option[Int] = Some(2)
+   */
+  def map[F[_]: Monad, A, B](a: F[A])(f: A => B): F[B] =
+    ???
+
+  /**
    * Witness that all things with `bind` and `map` also have `ap`
    *
    * scala> Monad[Option].ap(Option(1))(Some((i: Int) => i + 1)
@@ -98,7 +104,7 @@ object MonadSyntax {
   implicit class AnyMonadSyntax[M[_]: Monad, A](a: M[A]) {
 
     def map[B](f: A => B): M[B] =
-      Monad[M].map(a)(f)
+      Monad.map(a)(f)
 
     def flatMap[B](f: A => M[B]): M[B] =
       Monad[M].bind(a)(f)
