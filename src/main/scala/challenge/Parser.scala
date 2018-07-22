@@ -14,6 +14,11 @@ case class ParseState[A](input: String, value: A)
  * A parser is a function from an input string,
  */
 case class Parser[A](run: String => Result[ParseState[A]]) {
+
+  /** Run the parser and ignore the remaining input */
+  def parse(value: String): Result[A] =
+    run(value).map(_.value)
+
   /**
    * Return a parser with the function `f` applied to the
    * output of that parser.

@@ -6,6 +6,9 @@ case class ParseState[A](input: String, value: A)
 
 case class Parser[A](run: String => Result[ParseState[A]]) {
 
+  def parse(value: String): Result[A] =
+    run(value).map(_.value)
+
   def map[B](f: A => B): Parser[B] =
     Parser(s => run(s).map(ps =>
       ps.copy(value = f(ps.value))
@@ -74,7 +77,7 @@ object Parser {
     satisfy(Character.isUpperCase)
 
   def alpha: Parser[Char] =
-    satisfy(c => Character.isAlphabetic(c.toInt))
+    satisfy(Character.isLetterOrDigit)
 
   def sequence[A](parsers: List[Parser[A]]): Parser[List[A]] =
     parsers match {
@@ -130,7 +133,7 @@ object PersonParser {
     } yield Person(nm, ag, ph, ad)
 
   def parseAll(data: List[String]): Result[List[Person]] =
-    Result.sequence(data.map(s => personParser.run(s).map(_.value)))
+    Result.sequence(data.map(s => personParser.parse(s)))
 
   def Data = List(
     "Fred 32 123.456-1213# 301 cobblestone"

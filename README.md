@@ -110,10 +110,11 @@ different backgrounds will progress through at different rates.
 
 #### Exercises
 
+NOTE: `Applicative` can often prove more tricky than `Monad`, feel free to flip the order if you get stuck.
+
  - `src/main/scala/intro/Functor.scala`
  - `src/main/scala/intro/Applicative.scala`
  - `src/main/scala/intro/Monad.scala`
-
 
 ### Algebra for fun and profit
 
@@ -122,6 +123,8 @@ different backgrounds will progress through at different rates.
 ### Parsers
 
  - `src/main/scala/challenge/Parser.scala`
+ - `src/main/scala/challenge/MoreParser.scala`
+ - `src/main/scala/challenge/JsonParser.scala`
 
 ### Zippers
 
@@ -137,8 +140,6 @@ different backgrounds will progress through at different rates.
  - `src/main/scala/patterns/Writer.scala`
  - `src/main/scala/patterns/State.scala`
  - `src/main/scala/patterns/Http.scala`
- - `src/main/scala/patterns/Applicative.scala`
- - `src/main/scala/patterns/Monad.scala`
  - `src/main/scala/patterns/ReaderT.scala`
  - `src/main/scala/patterns/WriterT.scala`
  - `src/main/scala/patterns/StateT.scala`
