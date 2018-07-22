@@ -79,77 +79,77 @@ different backgrounds will progress through at different rates.
 
 ### Just enough scala
 
- - `src/main/scala/intro/Scala.scala`
- - `src/main/scala/intro/CheatSheet.scala`
+ - [src/main/scala/intro/Scala.scala](src/main/scala/intro/Scala.scala)
+ - [src/main/scala/intro/CheatSheet.scala](src/main/scala/intro/CheatSheet.scala)
 
 
 ### What is functional programming?
 
- - `src/main/scala/intro/Intro.scala`
+ - [src/main/scala/intro/Intro.scala](src/main/scala/intro/Intro.scala)
 
 
 ### Introduction to data structures and higher order functions
 
 #### Examples
 
- - `src/main/scala/intro/Id.scala`
- - `src/main/scala/intro/Optional.scala`
+ - [src/main/scala/intro/Id.scala](src/main/scala/intro/Id.scala)
+ - [src/main/scala/intro/Optional.scala](src/main/scala/intro/Optional.scala)
 
 #### Exercises
 
- - Lists - `src/main/scala/intro/List.scala`
- - Errors without exceptions - `src/main/scala/intro/Result.scala`
+ - Lists - [src/main/scala/intro/List.scala](src/main/scala/intro/List.scala)
+ - Errors without exceptions - [src/main/scala/intro/Result.scala](src/main/scala/intro/Result.scala)
 
 
 ### Intro to Type Classes
 
 #### Example
 
- - `src/main/scala/intro/Equal.scala`
+ - [src/main/scala/intro/Equal.scala](src/main/scala/intro/Equal.scala)
 
 #### Exercises
 
-NOTE: `Applicative` can often prove more tricky than `Monad`, feel free to flip the order if you get stuck.
+NOTE: [Applicative](Applicative) can often prove more tricky than [Monad](Monad), feel free to flip the order if you get stuck.
 
- - `src/main/scala/intro/Functor.scala`
- - `src/main/scala/intro/Applicative.scala`
- - `src/main/scala/intro/Monad.scala`
+ - [src/main/scala/intro/Functor.scala](src/main/scala/intro/Functor.scala)
+ - [src/main/scala/intro/Applicative.scala](src/main/scala/intro/Applicative.scala)
+ - [src/main/scala/intro/Monad.scala](src/main/scala/intro/Monad.scala)
 
 ### Algebra for fun and profit
 
- - `src/main/scala/intro/Monoid.scala`
+ - [src/main/scala/intro/Monoid.scala](src/main/scala/intro/Monoid.scala)
 
 ### Parsers
 
- - `src/main/scala/challenge/Parser.scala`
- - `src/main/scala/challenge/MoreParser.scala`
- - `src/main/scala/challenge/JsonParser.scala`
+ - [src/main/scala/challenge/Parser.scala](src/main/scala/challenge/Parser.scala)
+ - [src/main/scala/challenge/MoreParser.scala](src/main/scala/challenge/MoreParser.scala)
+ - [src/main/scala/challenge/JsonParser.scala](src/main/scala/challenge/JsonParser.scala)
 
 ### Zippers
 
- - `src/main/scala/challenge/Zippers.scala`
+ - [src/main/scala/challenge/Zippers.scala](src/main/scala/challenge/Zippers.scala)
 
 ### Lenses
 
- - `src/main/scala/challenge/Lens.scala` (TBD)
+ - [src/main/scala/challenge/Lens.scala](src/main/scala/challenge/Lens.scala) (TBD)
 
 ### Patterns in Types
 
- - `src/main/scala/patterns/Reader.scala`
- - `src/main/scala/patterns/Writer.scala`
- - `src/main/scala/patterns/State.scala`
- - `src/main/scala/patterns/Http.scala`
- - `src/main/scala/patterns/ReaderT.scala`
- - `src/main/scala/patterns/WriterT.scala`
- - `src/main/scala/patterns/StateT.scala`
- - `src/main/scala/patterns/MonadTrans.scala`
- - `src/main/scala/patterns/HttpT.scala`
+ - [src/main/scala/patterns/Reader.scala](src/main/scala/patterns/Reader.scala)
+ - [src/main/scala/patterns/Writer.scala](src/main/scala/patterns/Writer.scala)
+ - [src/main/scala/patterns/State.scala](src/main/scala/patterns/State.scala)
+ - [src/main/scala/patterns/Http.scala](src/main/scala/patterns/Http.scala)
+ - [src/main/scala/patterns/ReaderT.scala](src/main/scala/patterns/ReaderT.scala)
+ - [src/main/scala/patterns/WriterT.scala](src/main/scala/patterns/WriterT.scala)
+ - [src/main/scala/patterns/StateT.scala](src/main/scala/patterns/StateT.scala)
+ - [src/main/scala/patterns/MonadTrans.scala](src/main/scala/patterns/MonadTrans.scala)
+ - [src/main/scala/patterns/HttpT.scala](src/main/scala/patterns/HttpT.scala)
 
 ### Freedom
 
- - `src/main/scala/challenge/Trampoline.scala` (TBD)
- - `src/main/scala/challenge/Free.scala` (TBD)
+ - [src/main/scala/challenge/Trampoline.scala](src/main/scala/challenge/Trampoline.scala) (TBD)
+ - [src/main/scala/challenge/Free.scala](src/main/scala/challenge/Free.scala) (TBD)
 
 ### Stream Processing
 
- - `src/main/scala/challenge/Streams.scala` (TBD)
+ - [src/main/scala/challenge/Streams.scala](src/main/scala/challenge/Streams.scala) (TBD)
