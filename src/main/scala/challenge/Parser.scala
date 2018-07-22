@@ -15,10 +15,6 @@ case class ParseState[A](input: String, value: A)
  */
 case class Parser[A](run: String => Result[ParseState[A]]) {
 
-  /** Run the parser and ignore the remaining input */
-  def parse(value: String): Result[A] =
-    run(value).map(_.value)
-
   /**
    * Return a parser with the function `f` applied to the
    * output of that parser.
@@ -84,6 +80,18 @@ case class Parser[A](run: String => Result[ParseState[A]]) {
    *   = Ok(ParseState(hello,7))
    */
   def |||(f: => Parser[A]): Parser[A] =
+    ???
+
+  /**
+   * Run the parser and ignore the fail if there is any remaining output.
+   *
+   * scala> Parser.character.parseAll("a")
+   *  = Ok('c')
+   *
+   * scala> Parser.character.parseAll("ab")
+   *  = Fail(UnexpectedInput("b"))
+   */
+  def parseAll(value: String): Result[A] =
     ???
 }
 

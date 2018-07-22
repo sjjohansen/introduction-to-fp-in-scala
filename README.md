@@ -25,8 +25,28 @@ Getting scala and validating your environment:
     git clone https://github.com/markhibberd/introduction-to-fp-in-scala.git
     cd introduction-to-fp-in-scala
     ./sbt "test:compile"
+    # For windows users just use your installed `sbt` directly without the `./`
 
-Testing specific tests in a loop, which is good when working on a particular exercise:
+For either platform this may take a few minutes. It will:
+
+ 1. Download the sbt build tool.
+ 2. Download the required versions of scala.
+ 3. Compile the main and test source code.
+
+You should see no errors and an exit code of 0.
+
+
+## Running the tests
+
+If you want to run all the tests once then you can simple run
+
+    ./sbt test
+
+However this can be tedious, and requires waiting for SBT to start and for _all_ the tests to run
+(which might get noisy if they fail).
+It is recommend to start the SBT console and run specific tests in a loop,
+which is handy when working on a particular exercise:
+
 
     # Start the SBT terminal once, and then subsequent commands are run within that program
     # Be careful not to type Ctrl^C as this kills the entire session
@@ -38,15 +58,6 @@ Testing specific tests in a loop, which is good when working on a particular exe
     # Add a ~ for starting a watch daemon to recompile and re-run tests when files are changed
     > ~testOnly "*Result*"
 
-
-For either platform this may take a few minutes. It will:
-
- 1. Download the sbt build tool.
- 2. Download the required versions of scala.
- 3. Compile the main and test source code.
- 4. Run the tests.
-
-You should see green output, no errors and, an exit code of 0.
 
 ## Working with scala.
 
@@ -75,6 +86,12 @@ time to debug any editor issues.
 
 There is about two weeks worth of material available, people with
 different backgrounds will progress through at different rates.
+
+
+## Answers
+
+If get get stuck there is an [answers](src/main/scala/answers) folder where you can look for
+help or inspiration. Don't feel bad if you need to peek. ;-)
 
 
 ### Just enough scala
@@ -122,6 +139,9 @@ NOTE: `Applicative` can often prove more tricky than `Monad`, feel free to flip 
 ### Parsers
 
  - [src/main/scala/challenge/Parser.scala](src/main/scala/challenge/Parser.scala)
+
+ If you enjoyed parsing and want some more then writing a json parser is also fun:
+
  - [src/main/scala/challenge/MoreParser.scala](src/main/scala/challenge/MoreParser.scala)
  - [src/main/scala/challenge/JsonParser.scala](src/main/scala/challenge/JsonParser.scala)
 

@@ -19,12 +19,16 @@ object JsonParser {
   def stringParser: Parser[String] =
     for {
       _ <- Parser.is('"')
-      s <- Parser.list(Parser.alpha)
+      s <- Parser.list(Parser.satisfy(_ != '"'))
       _ <- Parser.is('"')
     } yield s.mkString
 
   def numberParser: Parser[Double] =
-    Parser.natural.map(_.toDouble)
+    for {
+      m <- string("-") ||| string("")
+      n <- Parser.natural.map(_.toString)
+      d <- Parser.is('.').flatMap(p => Parser.natural.map(n => p + n.toString)) ||| string("")
+    } yield (m + n + d).toDouble
 
   def booleanParser: Parser[Boolean] =
     string("true").map(_ => true) ||| string("false").map(_ => false)
@@ -73,7 +77,4 @@ object JsonParser {
     nullParser.map(_ => JsonNull) |||
     arrayParser.map(JsonArray) |||
     objectParser.map(JsonObject)
-
-  def parse(json: String): Result[Json] =
-    jsonParser.run(json).map(_.value)
 }

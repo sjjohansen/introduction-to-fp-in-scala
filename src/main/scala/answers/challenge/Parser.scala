@@ -6,9 +6,6 @@ case class ParseState[A](input: String, value: A)
 
 case class Parser[A](run: String => Result[ParseState[A]]) {
 
-  def parse(value: String): Result[A] =
-    run(value).map(_.value)
-
   def map[B](f: A => B): Parser[B] =
     Parser(s => run(s).map(ps =>
       ps.copy(value = f(ps.value))
@@ -24,6 +21,11 @@ case class Parser[A](run: String => Result[ParseState[A]]) {
 
   def |||(f: => Parser[A]): Parser[A] =
     Parser(s => run(s) ||| f.run(s))
+
+  def parseAll(value: String): Result[A] =
+    run(value).flatMap(s =>
+      if (s.input.isEmpty) Ok(s.value) else Fail(UnexpectedInput(s.input))
+    )
 }
 
 object Parser {
@@ -133,7 +135,7 @@ object PersonParser {
     } yield Person(nm, ag, ph, ad)
 
   def parseAll(data: List[String]): Result[List[Person]] =
-    Result.sequence(data.map(s => personParser.parse(s)))
+    Result.sequence(data.map(s => personParser.parseAll(s)))
 
   def Data = List(
     "Fred 32 123.456-1213# 301 cobblestone"

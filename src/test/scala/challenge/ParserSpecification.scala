@@ -35,6 +35,12 @@ object ParserSpecification extends Properties("Parser") {
   property("parser: ||| fail") =
     (Parser.failed[Int](NotEnoughInput) ||| Parser.value(7)).run("hello") ?= Ok(ParseState("hello", 7))
 
+  property("parser: parseAll ok") =
+    Parser.character.parseAll("a") ?= Ok('a')
+
+  property("parser: parseAll fail") =
+    Parser.character.parseAll("ab") ?= Fail(UnexpectedInput("b"))
+
   property("parser: character") =
     Parser.character.run("hello") ?= Ok(ParseState("ello", 'h'))
 
