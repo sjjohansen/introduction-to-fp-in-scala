@@ -55,10 +55,6 @@ prefer an IDE, you can use the eclipse based scala-ide,
 intellij, or emacs with ensime. There are commented out lines
 in `project/plugins.sbt` that will help you get started:
 
-You can generate project files for intellij with (after uncommenting sbt-idea plugin):
-
-    ./sbt 'gen-idea no-classifiers'
-
 You can generate project files for eclipse with (after uncommenting sbteclipse-plugin plugin):
 
     ./sbt eclipse
@@ -66,6 +62,9 @@ You can generate project files for eclipse with (after uncommenting sbteclipse-p
 If you want to use ensime (after uncommenting ensime-sbt-cmd):
 
     ./sbt 'ensime generate'
+
+You can import the project files for intellij if you have the latest
+[scala plugin](https://plugins.jetbrains.com/plugin/1347-scala) enabled.
 
 Just note that if you choose eclipse or intellij, have a
 backup texteditor as well, because there won't be enough
