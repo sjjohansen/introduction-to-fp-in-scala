@@ -109,7 +109,7 @@ different backgrounds will progress through at different rates.
 
 #### Exercises
 
-NOTE: [Applicative](Applicative) can often prove more tricky than [Monad](Monad), feel free to flip the order if you get stuck.
+NOTE: `Applicative` can often prove more tricky than `Monad`, feel free to flip the order if you get stuck.
 
  - [src/main/scala/intro/Functor.scala](src/main/scala/intro/Functor.scala)
  - [src/main/scala/intro/Applicative.scala](src/main/scala/intro/Applicative.scala)
