@@ -1,6 +1,6 @@
-package answers.challenge
+package challenge
 
-import answers.intro._
+import intro._
 import test._
 
 object JsonParserSpecification extends Properties("JsonParser") {
