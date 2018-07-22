@@ -69,22 +69,19 @@ object Writer {
   def sequence[W: Monoid, A](writers: List[Writer[W, A]]): Writer[W, List[A]] =
     ???
 
-  class Writer_[W] {
-    type l[a] = Writer[W, a]
-  }
-
-  implicit def WriterMonad[W: Monoid]: Monad[Writer_[W]#l] =
-    new Monad[Writer_[W]#l] {
-      def point[A](a: => A) = value[W, A](a)
-      def bind[A, B](a: Writer[W, A])(f: A => Writer[W, B]) = a flatMap f
+  implicit def WriterMonad[W: Monoid]: Monad[Writer[W, ?]] =
+    new Monad[Writer[W, ?]] {
+      def point[A](a: => A): Writer[W, A] = value[W, A](a)
+      def bind[A, B](a: Writer[W, A])(f: A => Writer[W, B]): Writer[W, B] = a flatMap f
     }
 
-  implicit def WriterEqual[W: Equal, A: Equal] =
+  implicit def WriterEqual[W: Equal, A: Equal]: Equal[Writer[W, A]] =
     Equal.from[Writer[W, A]]((a, b) => (a.log -> a.value) === (b.log -> b.value))
 
   implicit def WriterMoniod[W: Monoid, A: Monoid]: Monoid[Writer[W, A]] =
     new Monoid[Writer[W, A]] {
-      def identity = Writer.value[W, A](Monoid[A].identity)
+      def identity: Writer[W, A] =
+        Writer.value[W, A](Monoid[A].identity)
       def op(l: Writer[W, A], r: Writer[W, A]) =
         Writer(Monoid[W].op(l.log, r.log), Monoid[A].op(l.value, r.value))
     }

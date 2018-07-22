@@ -65,21 +65,13 @@ object WriterT {
     ???
 
 
-  class WriterT_[M[_], W] {
-    type l[a] = WriterT[M, W, a]
-  }
-
-  class WriterT__[W] {
-    type l[f[_], a] = WriterT[f, W, a]
-  }
-
-  implicit def WriterTMonad[F[_], W](implicit F: Monad[F], W: Monoid[W]): Monad[WriterT_[F, W]#l] =
-    new Monad[WriterT_[F, W]#l] {
+  implicit def WriterTMonad[F[_], W](implicit F: Monad[F], W: Monoid[W]): Monad[WriterT[F, W, ?]] =
+    new Monad[WriterT[F, W, ?]] {
       def point[A](a: => A) = WriterT(F.point((W.identity, a)))
-      def bind[A, B](a: WriterT[F, W, A])(f: A => WriterT[F, W, B]) = a flatMap f
+      def bind[A, B](a: WriterT[F, W, A])(f: A => WriterT[F, W, B]): WriterT[F, W, B] = a flatMap f
     }
 
-  implicit def WriterTEqual[F[_], W, A](implicit E: Equal[F[(W, A)]]) =
+  implicit def WriterTEqual[F[_], W, A](implicit E: Equal[F[(W, A)]]): Equal[WriterT[F, W, A]] =
     Equal.from[WriterT[F, W, A]]((a, b) => a.run === b.run)
 
   /*
@@ -89,6 +81,6 @@ object WriterT {
    *
    * Hint: Try using WriterT constructor and Monad[M].map(ga).
    */
-  implicit def WriterTMonadTrans[W:Monoid]: MonadTrans[WriterT__[W]#l] =
+  implicit def WriterTMonadTrans[W:Monoid]: MonadTrans[WriterT[?[_], W, ?]] =
     ???
 }

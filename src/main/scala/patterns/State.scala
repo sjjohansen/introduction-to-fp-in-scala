@@ -93,13 +93,9 @@ object State {
   def put[S](s: S): State[S, Unit] =
     ???
 
-  class State_[S] {
-    type l[a] = State[S, a]
-  }
-
-  implicit def StateMonad[S]: Monad[State_[S]#l] =
-    new Monad[State_[S]#l] {
+  implicit def StateMonad[S]: Monad[State[S, ?]] =
+    new Monad[State[S, ?]] {
       def point[A](a: => A) = value(a)
-      def bind[A, B](a: State[S, A])(f: A => State[S, B]) = a flatMap f
+      def bind[A, B](a: State[S, A])(f: A => State[S, B]): State[S, B] = a flatMap f
     }
 }

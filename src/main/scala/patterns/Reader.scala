@@ -84,7 +84,7 @@ object Reader {
       def identity: Reader[R, A] =
         value[R, A](Monoid[A].identity)
 
-      def op(a: Reader[R, A], b: Reader[R, A]) =
+      def op(a: Reader[R, A], b: Reader[R, A]): Reader[R, A] =
         for { aa <- a; bb <- b } yield Monoid[A].op(aa, bb)
     }
 
@@ -93,12 +93,12 @@ object Reader {
     type l[a] = Reader[R, a]
   }
 
-  implicit def ReaderMonad[R]: Monad[Reader_[R]#l] =
-    new Monad[Reader_[R]#l] {
+  implicit def ReaderMonad[R]: Monad[Reader[R, ?]] =
+    new Monad[Reader[R, ?]] {
       def point[A](a: => A): Reader[R, A] =
         value(a)
 
-      def bind[A, B](r: Reader[R, A])(f: A => Reader[R, B]) =
+      def bind[A, B](r: Reader[R, A])(f: A => Reader[R, B]): Reader[R, B] =
         r flatMap f
     }
 }
