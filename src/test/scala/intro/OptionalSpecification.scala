@@ -6,6 +6,12 @@ import test._
 
 object OptionalSpecification extends Properties("Optional") {
 
+  property("fold: empty") =
+    Optional.empty[Int].fold(x => x, 0) ?= 0
+
+  property("fold: full") =
+    Full(1).fold(x => x, 0) ?= 1
+
   property("map: empty") =
     Optional.empty[Int].map(_ + 1) ?= Optional.empty
 

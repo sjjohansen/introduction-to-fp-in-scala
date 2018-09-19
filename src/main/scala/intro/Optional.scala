@@ -29,8 +29,10 @@ sealed trait Optional[A] {
   def fold[X](
     full: A => X,
     empty: => X
-  ): X =
-    ???
+  ): X = this match {
+    case Full(a) => full(a)
+    case Empty() => empty
+  }
 
   /*
    * Implement map for Optional[A].
@@ -45,8 +47,10 @@ sealed trait Optional[A] {
    * scala> Empty[Int]().map(x => x + 10)
    *  = Emptyy()
    */
-  def map[B](f: A => B): Optional[B] =
-    ???
+  def map[B](f: A => B): Optional[B] = this match {
+    case Full(a) => Full(f(a))
+    case Empty() => Empty()
+  }
 
   /*
    * Implement flatMap.
@@ -65,8 +69,12 @@ sealed trait Optional[A] {
    *
    * Advanced: Try using fold.
    */
-  def flatMap[B](f: A => Optional[B]): Optional[B] =
-    ???
+  def flatMapNoFold[B](f: A => Optional[B]): Optional[B] = this match {
+    case Full(a) => f(a)
+    case Empty() => Empty()
+  }
+
+  def flatMap[B](f: A => Optional[B]): Optional[B] = fold(f, Empty())
 
   /*
    * Extract the value if it is success case otherwise use default value.
@@ -78,8 +86,10 @@ sealed trait Optional[A] {
    * scala> Empty[Int]().getOrElse(10)
    *  = 10
    */
-  def getOrElse(otherwise: => A): A =
-    ???
+  def getOrElse(otherwise: => A): A = this match {
+    case Full(a) => a
+    case Empty() => otherwise
+  }
 
   /*
    * Implement choice, take this result if successful otherwise take
@@ -97,8 +107,10 @@ sealed trait Optional[A] {
    * scala> Empty[Int]() ||| Empty[Int]()
    *  = Empty()
    */
-  def |||(alternative: => Optional[A]): Optional[A] =
-    ???
+  def |||(alternative: => Optional[A]): Optional[A] = this match {
+    case Full(a) => Full(a)
+    case Empty() => alternative
+  }
 }
 
 case class Full[A](a: A) extends Optional[A]
