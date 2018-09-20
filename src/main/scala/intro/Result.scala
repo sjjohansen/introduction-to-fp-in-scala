@@ -213,20 +213,30 @@ object ResultExample {
    * Hint: Scala defines String#toInt, but warning it throws exceptions
    *       if it is not a valid Int :| i.e. use try catch.
    */
-  def int(body: String): Result[Int] =
-    ???
+  def int(body: String): Result[Int] = try {
+    Ok(body.toInt)
+  } catch {
+    case _: NumberFormatException => Fail(NotANumber(body))
+  }
 
   /*
    * Parse the operation if it is valid, otherwise fail with InvalidOperation.
    */
-  def operation(op: String): Result[Operation] =
-    ???
+  def operation(op: String): Result[Operation] = op match {
+    case "+" => Ok(Plus)
+    case "-" => Ok(Minus)
+    case "*" => Ok(Multiply)
+    case _ => Fail(InvalidOperation(op))
+  }
 
   /*
    * Compute an `answer`, by running operation for n and m.
    */
-  def calculate(op: Operation, n: Int, m: Int): Int =
-    ???
+  def calculate(op: Operation, n: Int, m: Int): Int = op match {
+    case Plus => n + m
+    case Minus => n - m
+    case Multiply => n * m
+  }
 
   /*
    * Attempt to compute an `answer`, by:
@@ -237,19 +247,27 @@ object ResultExample {
    *
    * hint: use flatMap / map
    */
-  def attempt(op: String, n: String, m: String): Result[Int] =
-    ???
+  def attempt(op: String, n: String, m: String): Result[Int] = {
+    for {
+      oper <- operation(op)
+      en <- int(n)
+      em <- int(m)
+    } yield calculate(oper, en, em)
+  }
 
   /*
    * Run a calculation by pattern matching three elements off the input arguments,
    * parsing the operation, a value for n and a value for m.
    */
-  def run(args: List[String]): Result[Int] =
-    ???
+  def run(args: List[String]): Result[Int] = args.length match {
+    case 0 => Fail(NotEnoughInput)
+    case 3 => attempt(args.head, args(1), args(2))  // only using .head to keep IntelliJ happy...
+    case _ => Fail(UnexpectedInput(args.mkString(" ")))
+  }
 
-  def main(args: Array[String]) =
+  def main(args: Array[String]): Unit =
     println(run(args.toList) match {
-      case Ok(result) => s"result: ${result}"
-      case Fail(error) => s"failed: ${error}"
+      case Ok(result) => s"result: $result"
+      case Fail(error) => s"failed: $error"
     })
 }
