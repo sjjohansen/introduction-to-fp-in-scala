@@ -84,4 +84,7 @@ A:
 
 Q: Need to research this: "For our result type this is just called fold. More formally we refer to this as a catamorphism."
    The first hit on Stackoverflow adds a whole bunch more concepts I don't have :confused: : https://stackoverflow.com/questions/23724220/in-what-way-is-scalas-option-fold-a-catamorphism
-A: 
+A:
+
+Q: For the calculator would there be a reasonable way to capture all the errors if there are multiple issues? `List[Result[Int]]` ?
+A:
