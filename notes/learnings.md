@@ -159,3 +159,21 @@ def ranges(xs: List[Int]): List[(Int, Int)] =
       }
     }
 ```
+
+## Result
+
+1. `flatMap` and bind (in Haskell this is `>>=`):
+
+https://stackoverflow.com/questions/29187983/comparing-haskell-and-scala-bind-flatmap-examples
+
+2. I actually find this one (which is correct):
+
+```scala
+def flatMap[B](f: A => Result[B]): Result[B] = fold(Fail(_), f)
+```
+
+harder to read than this one (probably due to types and underscores):
+
+```scala
+def flatMap[B](f: A => Result[B]): Result[B] = this.fold(e => Fail(e), f)
+```

@@ -78,4 +78,10 @@ Q: Had a `foldRight` version:
 Q: Under the covers it seems like `foldRight` doing it's `reverse` would make it pretty close to how the solution
    for `ranges` has been implemented. My understanding is what `tailrec` unwraps into a `while` loop anyway, which
    is what happens in `reverse` so the result should be the same?
-A:    
+A:
+
+## Result
+
+Q: Need to research this: "For our result type this is just called fold. More formally we refer to this as a catamorphism."
+   The first hit on Stackoverflow adds a whole bunch more concepts I don't have :confused: : https://stackoverflow.com/questions/23724220/in-what-way-is-scalas-option-fold-a-catamorphism
+A: 
