@@ -1,5 +1,7 @@
 package intro
 
+import scala.annotation.tailrec
+
 object Lists {
 
   /*
@@ -47,8 +49,16 @@ object Lists {
    * scala> Lists.length(List(1, 2, 3, 4))
    * resX: Int = 4
    */
-  def length[A](xs: List[A]): Int =
-    ???
+  def length[A](xs: List[A]): Int = {
+
+    @tailrec
+    def innerLen(acc: Int, xs: List[A]): Int = xs match {
+      case Nil => acc
+      case _ :: tail => innerLen(acc + 1, tail)
+    }
+
+    innerLen(0, xs)
+  }
 
   /*
    * Exercise 2:
@@ -59,7 +69,7 @@ object Lists {
    * resX: Int = 4
    */
   def lengthX[A](xs: List[A]): Int =
-    ???
+    xs.foldRight(0) { (_,acc) => acc + 1 }
 
   /*
    * Exercise 3:
@@ -70,7 +80,7 @@ object Lists {
    * resX: List[Int] = List(1, 2, 3, 4, 5, 6, 7, 8)
    */
   def append[A](x: List[A], y: List[A]): List[A] =
-    ???
+    x.reverse.foldLeft(y)((acc, elem) => elem :: acc)
 
   /*
    * Exercise 4:
@@ -87,8 +97,25 @@ object Lists {
    *     Type annotations are required when scala can
    *     not infer what you mean.
    */
+  /*
+  def map[A, B](xs: List[A])(f: A => B): List[B] = xs match {
+    case Nil => Nil: List[B]
+    case h :: tail => f(h) :: map(tail)(f)
+  }
+  */
+  def mapL[A, B](xs: List[A])(f: A => B): List[B] = {
+    @tailrec
+    def innerMap(acc: List[B], xs: List[A])(f: A => B): List[B] = xs match {
+      case Nil => acc
+      case h :: tail => innerMap(f(h) :: acc, tail)(f)
+    }
+
+    innerMap(Nil: List[B], xs.reverse)(f)
+  }
+
   def map[A, B](xs: List[A])(f: A => B): List[B] =
-    ???
+    xs.foldRight(Nil: List[B])((elem, acc) => f(elem) :: acc)
+
 
   /*
    * Exercise 5:
@@ -99,7 +126,9 @@ object Lists {
    * resX: List[Int] = List(1, 2)
    */
   def filter[A](xs: List[A])(p: A => Boolean): List[A] =
-    ???
+    xs.foldRight(Nil: List[A]) { (elem, acc) =>
+      if (p(elem)) elem :: acc else acc
+    }
 
   /*
    * Exercise 6:
@@ -117,7 +146,9 @@ object Lists {
    *     not infer what you mean.
    */
   def reverse[A](xs: List[A]): List[A] =
-    ???
+    xs.foldLeft(Nil: List[A]) { (acc, elem) =>
+      elem :: acc
+    }
 
 
   /*
@@ -133,8 +164,18 @@ object Lists {
    * scala> Lists.sequence(List[Option[Int]](Some(1), None, Some(3)))
    * resX: Option[List[Int]] = None
    */
-  def sequence[A](xs: List[Option[A]]): Option[List[A]] =
-    ???
+  def sequence[A](xs: List[Option[A]]): Option[List[A]] = {
+
+    @tailrec
+    def innerSeq(acc: List[A], xs: List[Option[A]]): Option[List[A]] =
+      xs match {
+        case Nil => Some(acc)
+        case None :: _  => None: Option[List[A]]
+        case Some(x) :: tail => innerSeq(x :: acc, tail)
+      }
+
+    innerSeq(List[A](), xs.reverse)
+  }
 
   /*
    * *Challenge* Exercise 8:
@@ -156,5 +197,14 @@ object Lists {
    *     get the list in the correct order.   *
    */
   def ranges(xs: List[Int]): List[(Int, Int)] =
-    ???
+    xs.foldRight(List[(Int, Int)]()) { (elem, acc) =>
+      acc match {
+        case Nil => List[(Int, Int)]((elem, elem))
+        case (p, m) :: tail =>
+          if (p == elem + 1)
+            (elem, m) :: tail
+          else
+            (elem, elem) :: acc
+      }
+    }
 }
