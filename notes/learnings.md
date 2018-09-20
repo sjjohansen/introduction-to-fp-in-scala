@@ -125,3 +125,37 @@ res3: Int = 2
 
 scala>
 ```
+
+## Lists
+
+1. You can do nested extractions in pattern matching. My original version of `ranges` looked like this:
+
+```scala
+def ranges(xs: List[Int]): List[(Int, Int)] =
+    xs.foldRight(List[(Int, Int)]()) { (elem, acc) =>
+      acc match {
+        case Nil => List[(Int, Int)]((elem, elem))
+        case h :: tail =>
+          if (h._1 == elem + 1)
+            (elem, h._2) :: tail
+          else
+            (elem, elem) :: acc
+      }
+    }
+```
+
+But that tuple can be decomposed further:
+
+```scala
+def ranges(xs: List[Int]): List[(Int, Int)] =
+    xs.foldRight(List[(Int, Int)]()) { (elem, acc) =>
+      acc match {
+        case Nil => List[(Int, Int)]((elem, elem))
+        case (p, m) :: tail =>
+          if (p == elem + 1)
+            (elem, m) :: tail
+          else
+            (elem, elem) :: acc
+      }
+    }
+```
