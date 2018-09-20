@@ -1,5 +1,7 @@
 package intro
 
+import scala.annotation.tailrec
+
 /*
  * Handling errors without exceptions....
  * ======================================
@@ -40,8 +42,11 @@ sealed trait Result[A] {
   def fold[X](
     fail: Error => X,
     ok: A => X
-  ): X =
-    ???
+  ): X = this match {
+    case Fail(e) => fail(e)
+    case Ok(v) => ok(v)
+  }
+
 
   /*
    * Exercise 2:
@@ -65,8 +70,13 @@ sealed trait Result[A] {
    *
    * Advanced: Try using fold.
    */
-  def flatMap[B](f: A => Result[B]): Result[B] =
-    ???
+  def flatMapOrig[B](f: A => Result[B]): Result[B] = this match {
+    case Fail(e) => Fail(e)
+    case Ok(v) => f(v)
+  }
+
+  //def flatMap[B](f: A => Result[B]): Result[B] = fold(Fail(_), f)
+  def flatMap[B](f: A => Result[B]): Result[B] = this.fold(e => Fail(e), f)
 
   /*
    * Exercise 3:
@@ -85,8 +95,12 @@ sealed trait Result[A] {
    *
    * Advanced: Try using flatMap.
    */
-  def map[B](f: A => B): Result[B] =
-    ???
+  def mapX[B](f: A => B): Result[B] = this match {
+    case Fail(e) => Fail(e)
+    case Ok(v) => Ok(f(v))
+  }
+
+  def map[B](f: A => B): Result[B] = this.flatMap { x => Ok(f(x)) }
 
   /*
    * Exercise 4:
@@ -99,8 +113,10 @@ sealed trait Result[A] {
    * scala> Fail(NotEnoughInput).getOrElse(10)
    *  = 10
    */
-  def getOrElse(otherwise: => A): A =
-    ???
+  def getOrElse(otherwise: => A): A = this match {
+    case Fail(_) => otherwise
+    case Ok(v) => v
+  }
 
   /*
    * Exercise 5:
@@ -120,8 +136,11 @@ sealed trait Result[A] {
    * scala> Fail[Int](NotEnoughInput) ||| Fail[Int](UnexpectedInput("?"))
    *  = Fail[Int](UnexpectedInput("?"))
    */
-  def |||(alternative: => Result[A]): Result[A] =
-    ???
+  def |||(alternative: => Result[A]): Result[A] = this match {
+    case Ok(x) => Ok(x)
+    case Fail(_) => alternative
+  }
+
 }
 
 object Result {
@@ -153,8 +172,19 @@ object Result {
    * scala> Result.sequence(List[Result[Int]](Ok(1), Fail(NotEnoughInput), Ok(3)))
    * resX: Result[List[Int]] = Fail(NotEnoughInput)
    */
-  def sequence[A](xs: List[Result[A]]): Result[List[A]] =
-    ???
+  def sequence[A](xs: List[Result[A]]): Result[List[A]] = {
+
+    @tailrec
+    def innerSeq(acc: List[A], xs: List[Result[A]]): Result[List[A]] =
+      xs match {
+        case Nil => Ok(acc)
+        case Fail(e) :: _ => Fail(e): Fail[List[A]]
+        case Ok(x) :: tail => innerSeq(x :: acc, tail)
+      }
+
+    innerSeq(List[A](), xs.reverse)
+  }
+
 }
 
 
