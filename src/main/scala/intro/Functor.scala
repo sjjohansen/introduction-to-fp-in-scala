@@ -10,6 +10,7 @@ package intro
  */
 trait Functor[F[_]] {
 
+  // SJ: un-implemented method
   def map[A, B](a: F[A])(f: A => B): F[B]
 }
 
@@ -19,11 +20,17 @@ object Functor {
    *
    * usage: Functor[Int].map(1, 2)
    */
+  // SJ: this acts as a factory method for these Functors?
+  // F[_]: Functor is a context bound
   def apply[F[_]: Functor]: Functor[F] =
     implicitly[Functor[F]]
 
+  //def apply[F[_]](implicit fun: Functor[F]): Functor[F] = fun
+
+
   /* Functor Instances (cheating is good) */
 
+  // SJ: defining map methods in anonymous classes based on Functor[F[_]]
   implicit def IdFunctor: Functor[Id] = new Functor[Id] {
     def map[A, B](a: Id[A])(f: A => B): Id[B] =
       a.map(f)
@@ -59,7 +66,7 @@ object Functor {
    * resX: List[Unit] = List((), (), ())
    */
   def void[F[_]: Functor, A](fa: F[A]): F[Unit] =
-    ???
+    Functor[F].map(fa)(_ => ())
 
   /**
    * Anonymous map. Maps a constant value on a functor.
@@ -91,4 +98,9 @@ object Functor {
   /** Exercise: Inject `b` to the right of `A`s in `f`. */
   def strengthR[F[_]: Functor, A, B](f: F[A], b: B): F[(A, B)] =
     ???
+}
+
+object Thing extends App {
+  Functor[Id].map(Id(5))(identity)
+  //Functor[Int].map(1,2)
 }
