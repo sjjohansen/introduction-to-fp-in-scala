@@ -73,7 +73,7 @@ Q: Had a `foldRight` version:
  A:
 
  Q: The solution for `sequence` would traverse the whole list via recursion and then unwind back until it hit the first `None`. My solution was to try and do list decomposition and then break on the first `None` which I assume is running forward from the start of the list. If it was a big `List` and the `None` was in an early element wouldn't that be more efficient?
- A:
+ A: No because `flatMap` is a breaking function.
 
 Q: Under the covers it seems like `foldRight` doing it's `reverse` would make it pretty close to how the solution
    for `ranges` has been implemented. My understanding is what `tailrec` unwraps into a `while` loop anyway, which
@@ -87,4 +87,10 @@ Q: Need to research this: "For our result type this is just called fold. More fo
 A:
 
 Q: For the calculator would there be a reasonable way to capture all the errors if there are multiple issues? `List[Result[Int]]` ?
-A:
+A: See: Validation & Scalaz: http://eed3si9n.com/learning-scalaz/Validation.html
+
+## Functor
+
+Q: Seems like the example in the comments here wouldn't work?
+   https://github.com/charleso/introduction-to-fp-in-scala/blob/master/src/main/scala/intro/Functor.scala#L20
+A:    

@@ -47,6 +47,11 @@ object Obj {
 // could not find implicit value for parameter q: List[Int]
 implicit val l = (1 to 5).toList
 
+// note we can also use a def that returns List[Int]
+/*
+implicit def l: List[Int] = (1 to 5).toList
+*/
+
 val r = Obj.method2(5)
 ```
 
@@ -75,6 +80,10 @@ callByName(something())
 ```
 
 Also example of referential transparency (replacing an int value with a thing that returns an int value)
+
+4. Algebraic Data Types (ADT): https://alvinalexander.com/scala/fp-book/algebraic-data-types-adts-in-scala
+
+
 
 ## Optional
 
@@ -177,3 +186,89 @@ harder to read than this one (probably due to types and underscores):
 ```scala
 def flatMap[B](f: A => Result[B]): Result[B] = this.fold(e => Fail(e), f)
 ```
+
+2. Scala streams unsafe GC problems
+
+## Functor
+
+1. WTF is a Functor and a Monad (with sugar & peanuts):
+
+https://medium.com/beingprofessional/understanding-functor-and-monad-with-a-bag-of-peanuts-8fa702b3f69e
+
+Functor appears to be a thing with a `map` and an `apply` (called unit/return elsewhere)
+
+The definition of `identity`: https://github.com/scala/scala/blob/2.13.x/src/library/scala/Predef.scala#L206
+
+```scala
+@inline def identity[A](x: A): A = x // see `$conforms` for the implicit version
+```
+
+The `@inline` annotation: https://www.scala-lang.org/api/2.12.3/scala/inline.html
+Will try really had to have the compiler inline methods, which is basically like a macro
+expansion at compile time. The idea is to reduce the number of frames in the call stack.
+
+When we pass `identity` to a functor it proves that we only run the function `identity` and cause no other side effects or state changes.  This is the _identity law_.
+
+Functors also obey the _associative law_ which basically says if we call `map(f)` and then `map(g)` that should be the same as calling `map(x => g(f(x)))`, or `g` composed with `f`.
+
+Concrete examples of functors are `Option`, `List`, `Future` and `Try`.
+
+They allow us to do things like this, where we don't have to have `if-else` logic to handle the difference between `Some` & `None`:
+
+```scala
+amm> Some(1).map(_ + 2).map(_ * 3)
+res9: Option[Int] = Some(9)
+
+amm> (None: Option[Int]).map(_ + 2).map(_ * 3)
+res10: Option[Int] = None
+```
+
+2. Type-class implicit (type class pattern)
+The idea is to provide an alternative to inheritance via a sort of implicit adapter pattern.
+(see https://docs.scala-lang.org/tutorials/FAQ/context-bounds.html)
+
+```scala
+// why does this work?
+
+def apply[F[_]: Functor]: Functor[F] =
+  implicitly[Functor[F]]
+```
+
+Turns out it could be rewritten as this:
+
+```scala
+def apply[F[_]](implicit fun: Functor[F]): Functor[F] = fun
+```
+
+So what basically happens is `implicitly` and an implicit parameter group to `apply`.
+Here's the definition of from [Predef](https://github.com/scala/scala/blob/2.13.x/src/library/scala/Predef.scala#L214):
+
+```scala
+@inline def implicitly[T](implicit e: T) = e
+```
+
+So in our case that is the bit I've added as `(implicit fun: Functor[F])`.
+The other part is this `[F[_]: Functor]`.
+This is one of those _higher-kinded types_ where we expect one "hole" to be filled by the type we select. So `Int` & `Map[String,Int]` are no good but `List[Int]` is fine.
+The purpose of the colon in the type definition is to signify a context bound. This means that if we have this:
+
+```scala
+def f[A: B](a: A)...
+```
+
+Somewhere we also need an `implicit` `B[A]`.
+
+So to tie it all together, calling this:
+
+```scala
+Functor[Id].map(Id(5))(identity)
+```
+
+* This calls `Functor.apply[Id]` which has no explicit arguments.
+* As `Id` has a single type hole, it is ok for `F[_]`.
+* The `implicitly[Functor[F]]` adds the equivalent of `(implicit fun: Functor[F])` to `apply`.
+* This will check the scope for an implicit definition of `Functor[Id]`.
+* That finds `implicit def IdFunctor: Functor[Id] ...` as a `def` that returns the correct type can be implicit.
+* That `IdFunctor` method creates an anonymous class that mixes in the `Functor` trait and defines `map`
+* The `apply` method then returns that new anonymous class
+* We then call `map` on that and away we go!
