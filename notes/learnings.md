@@ -272,3 +272,21 @@ Functor[Id].map(Id(5))(identity)
 * That `IdFunctor` method creates an anonymous class that mixes in the `Functor` trait and defines `map`
 * The `apply` method then returns that new anonymous class
 * We then call `map` on that and away we go!
+
+3. Why does this work?
+
+```scala
+amm> Some(1).map(x => ())
+res15: Option[Unit] = Some(())
+```
+
+Looking at the definition of `Option.map` in the source:
+
+https://github.com/scala/scala/blob/2.13.x/src/library/scala/Option.scala#L156
+
+```scala
+@inline final def map[B](f: A => B): Option[B] =
+   if (isEmpty) None else Some(f(this.get))
+```
+
+so `x => ()` will take any value in a `Some` and replace it with a `Unit`.
