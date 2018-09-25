@@ -1,5 +1,9 @@
 package intro
 
+import jdk.management.resource.internal.inst.AbstractPlainDatagramSocketImplRMHooks
+
+import scala.annotation.tailrec
+
 trait Applicative[F[_]] {
 
   def point[A](a: => A): F[A]
@@ -25,10 +29,10 @@ object Applicative {
    */
   implicit def IdApplicative: Applicative[Id] =
     new Applicative[Id] {
-      def point[A](a: => A): Id[A] =
-        ???
+      def point[A](a: => A): Id[A] = Id(a)
+
       def ap[A, B](a: Id[A])(f: Id[A => B]): Id[B] =
-        ???
+        this.point(f.value(a.value))
     }
 
   /**
@@ -39,10 +43,15 @@ object Applicative {
    */
   implicit def OptionApplicative: Applicative[Option] =
     new Applicative[Option] {
-      def point[A](a: => A): Option[A] =
-        ???
-      def ap[A, B](a: Option[A])(f: Option[A => B]): Option[B] =
-        ???
+      def point[A](a: => A): Option[A] = Option(a)
+
+      def ap[A, B](a: Option[A])(f: Option[A => B]): Option[B] = a match {
+        case None => None
+        case Some(v) => f match {
+          case None => None
+          case Some(fun) => this.point(fun(v))
+        }
+      }
     }
 
   /**
@@ -56,10 +65,23 @@ object Applicative {
    */
   implicit def ListApplicative: Applicative[List] =
     new Applicative[List] {
-      def point[A](a: => A): List[A] =
-        ???
-      def ap[A, B](a: List[A])(f: List[A => B]): List[B] =
-        ???
+      def point[A](a: => A): List[A] = List(a)
+
+      // SJ: Think the for comprehension answer is a lot cleaner but keeping my first attempt anyway
+      def ap[A, B](a: List[A])(f: List[A => B]): List[B] = {
+
+        @tailrec
+        def innerAp(acc: List[B], l: List[A], f: List[A => B]): List[B] = f match {
+          case Nil => acc
+          case h :: tail => innerAp(l.map(h) ++ acc, l, tail)
+        }
+
+        innerAp(List[B](), a, f.reverse)
+      }
+
+      // the flatmap version
+      //def ap[A, B](a: List[A])(f: List[A => B]): List[B] = f.flatMap(fb => a.map(fb))
+
     }
 
   /**
@@ -71,8 +93,14 @@ object Applicative {
    * scala> Applicative.liftA2(Option(1), None)((i, j) => i + j)
    * resX: Option[Int] = None
    */
-  def liftA2[F[_]: Applicative, A, B, C](a: F[A], b: F[B])(f: (A, B) => C): F[C] =
-    ???
+  def liftA2[F[_]: Applicative, A, B, C](a: F[A], b: F[B])(f: (A, B) => C): F[C] = {
+    val applic = Applicative[F]
+    // this is now A => (B => C)
+    val fc = f.curried
+    // returns F[B => C]
+    val aApplic = applic.ap(a)(applic.point(fc))
+    applic.ap(b)(aApplic)
+  }
 
   /**
    * Apply a ternary function in the environment
@@ -83,8 +111,23 @@ object Applicative {
    * scala> Applicative.liftA2(Option(1), None, Option(3))((i, j, k) => i + j + k)
    * resX: Option[Int] = None
    */
-  def liftA3[F[_]: Applicative, A, B, C, D](a: F[A], b: F[B], c: F[C])(f: (A, B, C) => D): F[D] =
-    ???
+  def liftA3[F[_]: Applicative, A, B, C, D](a: F[A], b: F[B], c: F[C])(f: (A, B, C) => D): F[D] = {
+    val A = Applicative[F]
+    // the expanded version
+    /*
+    val fc = f.curried
+    val aApplic = A.ap(a)(A.point(fc))
+    val bApplic = A.ap(b)(aApplic)
+    A.ap(c)(bApplic)
+    */
+    A.ap(c)(
+      A.ap(b)(
+        A.ap(a)(
+          A.point(f.curried)
+        )
+      )
+    )
+  }
 
   /**
    * Apply a unary function in the environment, also known as `map`
@@ -95,8 +138,10 @@ object Applicative {
    * scala> Applicative.liftA1(Option.empty[Int])(_ + 1)
    * resX: Option[Int] = None
    */
-  def liftA1[F[_]: Applicative, A, B](a: F[A])(f: A => B): F[B] =
-    ???
+  def liftA1[F[_]: Applicative, A, B](a: F[A])(f: A => B): F[B] = {
+    val A = Applicative[F]
+    A.ap(a)(A.point(f))
+  }
 
   /**
    * Apply, discarding the value of the first argument.
@@ -111,7 +156,8 @@ object Applicative {
    * resX: List[List] = List(3, 4, 5, 3, 4, 5)
    */
   def apRight[F[_]: Applicative, A, B](a: F[A], b: F[B]): F[B] =
-    ???
+    liftA2(a, b) { (_,y) => y }
+
 
   /**
    * Sequences a list of structures to a structure of list.
@@ -125,8 +171,8 @@ object Applicative {
    * scala> Applicative.apLeft(List(1, 2), List(3, 4, 5))
    * resX: List[List] = List(1, 1, 1, 2, 2, 2)
    */
-  def apLeft[F[_]: Applicative, A, B](a: F[A], b: F[B]): F[B] =
-    ???
+  def apLeft[F[_]: Applicative, A, B](a: F[A], b: F[B]): F[A] =
+    liftA2(a, b) { (x,_) =>  x }
 
   /**
    * Sequences a list of structures to a structure of list.
@@ -143,8 +189,13 @@ object Applicative {
    * scala> Applicative.sequence(List(List(1, 2, 3), List(1, 2)))
    * resX: List[List[Int]] = List(List(1, 1), List(1, 2), List(2, 1), List(2, 2), List(3, 1), List(3, 2))
    */
-  def sequence[F[_]: Applicative, A](xs: List[F[A]]): F[List[A]] =
-    ???
+  def sequence[F[_]: Applicative, A](xs: List[F[A]]): F[List[A]] = {
+    val A = Applicative[F]
+    xs match {
+      case Nil => A.point(Nil)
+      case h :: tail => this.liftA2(h, sequence(tail)) { (a, b) => a :: b}
+    }
+  }
 
   /**
    * Applies a function to a list, preserving the resulting structure
@@ -153,7 +204,16 @@ object Applicative {
    * resX: Option[List[Int]] = Some(List(1, 2, 3))
    */
   def traverse[F[_]: Applicative, A, B](xs: List[A], f: A => F[B]): F[List[B]] =
-    ???
+  /*
+   * In the example this works with:
+   * A: Int
+   * B: Int
+   * F[B]: Option[Int]
+   *
+   * so xs.map(f) returns List[Option[Int]] which gets passed to sequence to return Option[List[Int]]
+   */
+    sequence(xs.map(f))
+
 
   /**
    * Replicate an effect a given number of times.
@@ -168,7 +228,7 @@ object Applicative {
    * resX: List[List[Int]] = List(List(1, 1), List(1, 2), List(2, 1), List(2, 2))
    */
   def replicateA[F[_]: Applicative, A](n: Int, xs: F[A]): F[List[A]] =
-    ???
+    sequence(List.fill(n)(xs))
 
   /**
    * Filter a list with a predicate that produces an effect.
@@ -180,6 +240,10 @@ object Applicative {
    * resX: Option[List[Int]] = None
    */
   def filterM[F[_]: Applicative, A](xs: List[A], p: A => F[Boolean]): F[List[A]] =
-    ???
+    Applicative.liftA1(
+      sequence(xs.map { a =>
+        Applicative.liftA1(p(a))(r => if (r) Some(a) else None)
+      } )
+    )(_.flatMap(_.toList))
 }
 
