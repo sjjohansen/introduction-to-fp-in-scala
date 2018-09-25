@@ -290,3 +290,96 @@ https://github.com/scala/scala/blob/2.13.x/src/library/scala/Option.scala#L156
 ```
 
 so `x => ()` will take any value in a `Some` and replace it with a `Unit`.
+
+## Applicative
+
+1. Really do need to get the `for` to `flatMap` & `map` thing worked out.
+
+Using this example:
+
+```scala
+scala> val optNums = List(Some(1), Some(2), None, Some(3))
+optNums: List[Option[Int]] = List(Some(1), Some(2), None, Some(3))
+
+scala> for {
+     |     optNum <- optNums
+     |     value <- optNum
+     | } yield value + 1
+res0: List[Int] = List(2, 3, 4)
+
+scala> optNums.flatMap(optNum => optNum.map(value => value+1))
+res1: List[Int] = List(2, 3, 4)
+```
+
+To walk this through:
+
+* The first loop becomes the `flapMap` so when we hit a `None` we don't call `map` on the value and just return the `None`
+* The second loop takes each element from the outer loop and calls the function after `yield` on the value.
+* We know there is a `Some` here we can unpack because the first `flatMap` has caught the `None` values
+
+So from `Applicative[List].ap`:
+
+```scala
+def ap[A, B](a: List[A])(f: List[A => B]): List[B] =
+  for {
+    fb <- f
+    b <- a
+  } yield fb(b)
+```
+
+This would translate to:
+
+```scala
+f.flatMap(fb => a.map(fb))
+```
+
+2. Currying example as we need to understand this for the solution to the lift functions:
+
+```scala
+// In the Applicative thing
+// A: Float
+// B: Int
+// C: Long
+val f: (Float, Int) => Long = (a, b) => Math.round(a + b.toFloat)
+
+val fout = f(7.6f, 90)
+
+// Float => (Int => Long)
+val fc = f.curried
+
+val fcout = fc(7.6f)(90)
+
+// passing just the first argument group returns a function
+
+// Int => Long
+val fcpart = fc(7.6f)
+
+// calling the second one returns a Long as expected
+val lng = fcpart(90)
+```
+
+A longer version showing how to do this 3 args:
+
+```scala
+// In the Applicative thing
+// A: String
+// B: Float
+// C: Int
+// D: Long
+val f: (String, Float, Int) => Long =
+  (s, a, b) => Math.round(a + b.toFloat) + s.length
+
+// String => (Float => (Int => Long))
+val fc = f.curried
+
+// Float => (Int => Long)
+val fcpartOne = fc("burp")
+
+// Int => Long
+val fcPartTwo = fcpartOne(7.6f)
+
+val ret = fcPartTwo(90)
+```
+
+So currying basically turns a function into one parameter group per parameter.
+https://github.com/scala/scala/blob/2.13.x/src/library/scala/Function3.scala#L25

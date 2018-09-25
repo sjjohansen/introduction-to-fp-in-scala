@@ -94,3 +94,12 @@ A: See: Validation & Scalaz: http://eed3si9n.com/learning-scalaz/Validation.html
 Q: Seems like the example in the comments here wouldn't work?
    https://github.com/charleso/introduction-to-fp-in-scala/blob/master/src/main/scala/intro/Functor.scala#L20
 A:    
+
+## Applicative
+
+Q: Any reason _not_ to use `point` to build the results from `ap`?
+A:
+
+Q: Are these equivalent (after calling `f.curried`)?
+   `A => (B => C)`
+   `A => B => C`
