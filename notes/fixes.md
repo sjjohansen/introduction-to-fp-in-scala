@@ -26,4 +26,8 @@ Pretty sure this should be `F[A]`
 
 https://github.com/charleso/introduction-to-fp-in-scala/blob/master/src/main/scala/intro/Applicative.scala#L152
 
+6. Shows examples for Monad.ap, not Monad.join:
+
+https://github.com/charleso/introduction-to-fp-in-scala/blob/master/src/main/scala/intro/Monad.scala#L83
+
 
